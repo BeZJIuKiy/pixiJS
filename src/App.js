@@ -1,23 +1,13 @@
-import logo from './logo.svg';
+import { Stage } from '@inlet/react-pixi';
 import './App.css';
+import { Pixi } from './components/Pixi/Pixi';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <Stage width="500" height="500"> */}
+        <Pixi />
+      {/* </Stage> */}
     </div>
   );
 }
