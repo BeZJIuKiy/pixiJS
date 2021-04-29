@@ -22,16 +22,7 @@ export const Pixi = observer(() => {
     }, []);
 
     const main = () => {
-        const renderer = new PIXI.Renderer({
-            view: canvasRef.current,                // Ссылка на объект
-            width: curSize.width,                   // Ширина
-            height: curSize.height,                 // Высота
-            resolution: window.devicePixelRatio,    // Разрешение
-            autoDensity: true,                      // Плотность
-        });
-
         window.addEventListener('resize', () => resize());
-
         const resize = () => {
             setCurSize({
                 width: window.innerWidth,
@@ -40,21 +31,34 @@ export const Pixi = observer(() => {
             renderer.resize(window.innerWidth, window.innerHeight);
         }
 
-        const stage = new PIXI.Container();         // Сюда все передается
+        const renderer = new PIXI.Renderer({
+            view: canvasRef.current,                // Ссылка на объект
+            width: curSize.width,                   // Ширина
+            height: curSize.height,                 // Высота
+            resolution: window.devicePixelRatio,    // Разрешение
+            autoDensity: true,                      // Плотность
+        });
 
-        const texture = PIXI.Texture.from(ava);     // Выбор изображения
-        const img = new PIXI.Sprite(texture);       // Создание изображения
+        const loader = PIXI.Loader.shared;
+        loader.onComplete.add(() => handleLoadComplete());
+        loader.add(ava);
+        loader.load();
 
-        img.anchor.x = 0.5;
-        img.anchor.y = 0.5;
+        const handleLoadComplete = () => {
+            const texture = loader.resources[ava].texture;
+            const image = new PIXI.Sprite(texture);
+            image.anchor.x = 0.5;
+            image.anchor.y = 0.5;
 
-        stage.addChild(img);
+            const stage = new PIXI.Container();
+            stage.addChild(image);
 
-        const ticker = new PIXI.Ticker();
-        ticker.add(() => animate());
-        ticker.start();
+            const ticker = new PIXI.Ticker();
+            ticker.add(() => animate(image, stage));
+            ticker.start();
+        }
 
-        const animate = (() => {
+        const animate = ((img, stage) => {
             img.x = renderer.screen.width / 2;
             img.y = renderer.screen.height / 2;
 
