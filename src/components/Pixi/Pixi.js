@@ -1,6 +1,6 @@
 // import { Stage, Container, Sprite, useApp, AnimatedSprite, PixiComponent, PIXI } from '@inlet/react-pixi';
 // import { Text } from '@pixi/text';
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import * as PIXI from 'pixi.js'
 import ava from './images/ava.jpg';
 import { observer } from 'mobx-react-lite';
@@ -10,38 +10,40 @@ import PixiState from '../Store/PixiState';
 
 export const Pixi = observer(() => {
     const canvasRef = useRef();
-    let _w = window.innerWidth;
-    let _h = window.innerHeight;
+    const [curSize, setCurSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
 
     useEffect(() => {
         PixiState.setCanvas(canvasRef.current);
 
         main();
-
     }, []);
 
     const main = () => {
         const renderer = new PIXI.Renderer({
-            view: canvasRef.current,            // Ссылка на объект
-            width: _w,                          // Ширина
-            height: _h,                         // Высота
-            resolution: window.devicePixelRatio,
-            autoDensity: true,
+            view: canvasRef.current,                // Ссылка на объект
+            width: curSize.width,                   // Ширина
+            height: curSize.height,                 // Высота
+            resolution: window.devicePixelRatio,    // Разрешение
+            autoDensity: true,                      // Плотность
         });
 
         window.addEventListener('resize', () => resize());
 
         const resize = () => {
-            _w = window.innerWidth;
-            _h = window.innerHeight;
-
-            renderer.resize(_w, _h);
+            setCurSize({
+                width: window.innerWidth,
+                height: window.innerHeight
+            })
+            renderer.resize(window.innerWidth, window.innerHeight);
         }
 
-        const stage = new PIXI.Container();     // Сюда все передается
+        const stage = new PIXI.Container();         // Сюда все передается
 
-        const texture = PIXI.Texture.from(ava);
-        const img = new PIXI.Sprite(texture);
+        const texture = PIXI.Texture.from(ava);     // Выбор изображения
+        const img = new PIXI.Sprite(texture);       // Создание изображения
 
         img.anchor.x = 0.5;
         img.anchor.y = 0.5;
