@@ -2,12 +2,12 @@
 // import { Text } from '@pixi/text';
 import React, { useEffect, useRef, useState } from "react"
 import * as PIXI from 'pixi.js'
-import ava from './images/ava.jpg';
+import ava1 from './images/ava1.jpg';
+import ava2 from './images/ava2.jpg';
 import { observer } from 'mobx-react-lite';
 import PixiState from '../Store/PixiState';
 
 // Тестовый проект
-
 export const Pixi = observer(() => {
     const canvasRef = useRef();
     const [curSize, setCurSize] = useState({
@@ -40,12 +40,20 @@ export const Pixi = observer(() => {
         });
 
         const loader = PIXI.Loader.shared;
-        loader.onComplete.add(() => handleLoadComplete());
-        loader.add(ava);
-        loader.load();
+        // loader.onComplete.add(() => handleLoadComplete());
+        // loader.onLoad.add(() => handleLoadAsset());
+        // loader.onError.add(() => handleLoadError());
+        // loader.onProgress.add(() => handleLoadProgress(loader));
+        
+        loader.add(ava1)
+            .add(ava2)
+            .on("asset", (() => handleLoadAsset()))
+            .on("error", (() => handleLoadError()))
+            .on("progress", (() => handleLoadProgress(loader)))
+            .load(() => handleLoadComplete());
 
         const handleLoadComplete = () => {
-            const texture = loader.resources[ava].texture;
+            const texture = loader.resources[ava1].texture;
             const image = new PIXI.Sprite(texture);
             image.anchor.x = 0.5;
             image.anchor.y = 0.5;
@@ -56,6 +64,15 @@ export const Pixi = observer(() => {
             const ticker = new PIXI.Ticker();
             ticker.add(() => animate(image, stage));
             ticker.start();
+        }
+        const handleLoadAsset = () => {
+            console.log("asset loaded");
+        }
+        const handleLoadError = () => {
+            console.error("load error");
+        }
+        const handleLoadProgress = (loader, resource) => {
+            console.log(loader.progress + "% loaded");
         }
 
         const animate = ((img, stage) => {
