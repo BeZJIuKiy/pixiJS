@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react"
 import * as PIXI from 'pixi.js'
 import ava1 from './images/ava1.jpg';
 import ava2 from './images/ava2.jpg';
+import ship from './images/ship.png';
 import { observer } from 'mobx-react-lite';
 import PixiState from '../Store/PixiState';
 
@@ -24,65 +25,43 @@ export const Pixi = observer(() => {
   }, []);
 
   const main = () => {
+    const app = new PIXI.Application({
+      view: canvasRef.current,
+      width: 801,
+      height: 601,
+      backgroundColor: 0xAAAAAA
+    })
+
+    // player object
+    const player = new PIXI.Sprite.from(ship);    // Берем нужную картинку
+    player.anchor.set(0.5);                       // Перемещае точку в центр этой картинки
+    player.x = app.view.width / 2;                // Выставляем картинку в центр объекта для рисования по ОХ
+    player.y = app.view.height / 2;               // Выставляем картинку в центр объекта для рисования по ОY
+
+    app.stage.addChild(player);                   // Добавили картинку на сцену
+
+    // app.renderer.view.addEventListener('click', () => {
+    //   console.log('Hello)');
+    // })
+
+    // mouse interactions
+    app.stage.interactive = true;
+    app.stage.on('pointermove', (e) => movePlayer(e))
+    const movePlayer = (e) => {
+      const pos = e.data.global;
+
+      player.x = pos.x;
+      player.y = pos.y;
+    }
+
     window.addEventListener('resize', () => resize());
     const resize = () => {
       setCurSize({
         width: window.innerWidth,
         height: window.innerHeight
       })
-      renderer.resize(window.innerWidth, window.innerHeight);
+      // renderer.resize(window.innerWidth, window.innerHeight);
     }
-
-    const renderer = new PIXI.Renderer({
-      view: canvasRef.current,                // Ссылка на объект
-      width: curSize.width,                   // Ширина
-      height: curSize.height,                 // Высота
-      resolution: window.devicePixelRatio,    // Разрешение
-      autoDensity: true,                      // Плотность
-    });
-
-    const loader = PIXI.Loader.shared;
-
-    loader
-      .add('mask', ava1)
-      .add('jonny', ava2)
-      .load(() => handleLoadComplete(loader, loader.resources));
-
-    loader.onLoad.add(() => handleLoadAsset(loader.resources));
-    loader.onError.add(() => handleLoadError());
-    loader.onProgress.add(() => handleLoadProgress(loader));
-
-    const handleLoadComplete = (loader, resources) => {
-      let image = new PIXI.Sprite(resources.mask.texture);
-      image.anchor.x = 0.5;
-      image.anchor.y = 0.5;
-
-      const stage = new PIXI.Container();
-      stage.addChild(image);
-
-      const ticker = new PIXI.Ticker();
-      ticker.add(() => animate(image, stage));
-      ticker.start();
-
-      setTimeout(() => image.texture = resources.jonny.texture, 2000)
-    }
-    const handleLoadAsset = (resources) => {
-      console.log('asset loaded');
-    }
-    const handleLoadError = () => {
-      console.error("load error");
-    }
-    const handleLoadProgress = (loader, resource) => {
-      console.log(loader.progress + "% loaded");
-    }
-
-    const animate = ((img, stage) => {
-      img.x = renderer.screen.width / 2;
-      img.y = renderer.screen.height / 2;
-
-      img.rotation += 0.01;
-      renderer.render(stage);
-    });
   }
 
   return (
