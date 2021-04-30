@@ -20,6 +20,7 @@ export const Pixi = observer(() => {
 
   useEffect(() => {
     PixiState.setCanvas(canvasRef.current);
+    document.addEventListener('keypress', keyPresHandler);
 
     main();
     listen();
@@ -74,7 +75,7 @@ export const Pixi = observer(() => {
     // canvasRef.current.onmousemove = mouseMoveHandler;
     // canvasRef.current.onmousedown = mouseDownHandler;
     // canvasRef.current.onmouseup = mouseUpHandler;
-    canvasRef.current.onkeypress = keyPresHandler;
+    // canvasRef.current.keypress = keyPresHandler;
     
   }
 
@@ -88,7 +89,7 @@ export const Pixi = observer(() => {
   //   console.log('mouse up');
   // }
   const keyPresHandler = (e) => {
-    console.log('key press');
+    console.log(e.key);
   }
 
 
