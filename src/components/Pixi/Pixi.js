@@ -22,6 +22,7 @@ export const Pixi = observer(() => {
     PixiState.setCanvas(canvasRef.current);
 
     main();
+    listen();
   }, []);
 
   const main = () => {
@@ -45,6 +46,7 @@ export const Pixi = observer(() => {
     // })
 
     // mouse interactions
+    /*
     app.stage.interactive = true;
     app.stage.on('pointermove', (e) => movePlayer(e))
     const movePlayer = (e) => {
@@ -53,6 +55,10 @@ export const Pixi = observer(() => {
       player.x = pos.x;
       player.y = pos.y;
     }
+    */
+
+    // keyboard event handlers
+
 
     window.addEventListener('resize', () => resize());
     const resize = () => {
@@ -63,6 +69,28 @@ export const Pixi = observer(() => {
       // renderer.resize(window.innerWidth, window.innerHeight);
     }
   }
+
+  const listen = () => {
+    // canvasRef.current.onmousemove = mouseMoveHandler;
+    // canvasRef.current.onmousedown = mouseDownHandler;
+    // canvasRef.current.onmouseup = mouseUpHandler;
+    canvasRef.current.onkeypress = keyPresHandler;
+    
+  }
+
+  // const mouseMoveHandler = (e) => {
+  //   console.log('mouse mooooove');
+  // }
+  // const mouseDownHandler = (e) => {
+  //   console.log('mouse down');
+  // }
+  // const mouseUpHandler = (e) => {
+  //   console.log('mouse up');
+  // }
+  const keyPresHandler = (e) => {
+    console.log('key press');
+  }
+
 
   return (
     <div>
